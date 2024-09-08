@@ -1,0 +1,13 @@
+{
+  "name": "backrooms-server",
+  "version": "1.0.0",
+  "description": "Server for Backrooms Project",
+  "main": "server.js",
+  "author": "Logan Cookson & Ethan Moon",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}
