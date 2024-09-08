@@ -1,4 +1,4 @@
-const socket = io()
+const socket = io();
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -24,6 +24,7 @@ let player = {
 
 // Flashlight properties
 let flashlightRadius = 50; // Starting radius in pixels (5 blocks)
+let flashlightExpandedRadius = 150; // Expanded radius in pixels (15 blocks)
 let flashlightDirection = { x: 0, y: 0 }; // Direction relative to cursor
 
 // Objects for players, walls, rooms, items, and generated chunks
@@ -129,8 +130,8 @@ function addRoomWalls(room) {
 
 // Function to spawn the player in the first room generated
 function spawnPlayerInFirstRoom(room) {
-    player.x = room.x + room.width / 2 - 5;
-    player.y = room.y + room.height / 2 - 5;
+    player.x = room.x + room.width / 2 - TILE_SIZE / 2;
+    player.y = room.y + room.height / 2 - TILE_SIZE / 2;
 }
 
 // Function to generate hallways connecting rooms
@@ -202,7 +203,7 @@ function generateChunk(chunkX, chunkY, seed) {
 
         // Create items (e.g., flashlight)
         if (Math.random() < 0.1) {
-            items.push({ x: roomX + roomWidth / 2, y: roomY + roomHeight / 2, id: 0 }); // Flashlight item
+            items.push({ x: roomX + roomWidth / 2 - TILE_SIZE / 2, y: roomY + roomHeight / 2 - TILE_SIZE / 2, id: 0 }); // Flashlight item
         }
     }
 
@@ -296,7 +297,7 @@ function checkItemCollision() {
         ) {
             if (item.id === 0) {
                 player.flashlight = true; // Pick up flashlight
-                flashlightRadius = 150; // Increase radius to 15 blocks (150px)
+                flashlightRadius = flashlightExpandedRadius; // Increase radius to expanded size
             }
             return false; // Remove item after pick up
         }
@@ -398,7 +399,6 @@ function draw() {
     requestAnimationFrame(draw);
 }
 
-
 // Event listeners for keyboard input
 let keys = {};
 window.addEventListener('keydown', (e) => keys[e.key] = true);
@@ -443,7 +443,7 @@ socket.on('updatePlayerPosition', (data) => {
         players[data.id].x = data.x;
         players[data.id].y = data.y;
     }
-    if (players[data.id].id == socket.id) {
+    if (players[data.id].id === socket.id) {
         if (player.x !== players[data.id].x) player.x = players[data.id].x;
         if (player.y !== players[data.id].y) player.y = players[data.id].y;
     }
@@ -477,3 +477,4 @@ draw();
 
 // Set interval to update the player's position
 setInterval(updateLocalPosition, 1000 / 60);
+
